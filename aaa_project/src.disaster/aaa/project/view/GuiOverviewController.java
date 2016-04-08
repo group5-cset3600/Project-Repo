@@ -1,0 +1,231 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package aaa.project.view;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import aaa.project.Main;
+import aaa.project.model.VM;
+import aaa.project.model.HUB;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
+/**
+ *
+ * @author sean.morris
+ */
+public class GuiOverviewController {
+
+    @FXML
+    private TableView<VM> vmTable;
+    @FXML
+    private TableColumn<VM, String> nameColumn;
+    @FXML
+    private TableColumn<VM, String> typeColumn;
+
+    @FXML
+    private Label typeLabel;
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private Label osLabel;
+    @FXML
+    private Label versionLabel;
+    @FXML
+    private Label sourceLabel;
+    @FXML
+    private Label ethernet0Label;
+    @FXML
+    private Label ethernet1Label;
+    @FXML
+    private Label ethernet2Label;
+
+    // Reference to the main application.
+    private Main mainApp;
+
+    /**
+     * The constructor. The constructor is called before the initialize()
+     * method.
+     */
+    public GuiOverviewController() {
+    }
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    private void initialize() {
+        // Initialize the person table with the two columns.
+        nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        //typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+        typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+
+        // Clear person details.
+        showVmDetails(null);
+
+        // Listen for selection changes and show the person details when changed.
+        vmTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> showVmDetails(newValue));
+
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     *
+     * @param mainApp
+     */
+    public void setMainApp(Main mainApp) {
+        this.mainApp = mainApp;
+
+        // Add observable list data to the table
+        vmTable.setItems(mainApp.getVmData());
+    }
+
+    /**
+     * Fills all text fields to show details about the person. If the specified
+     * person is null, all text fields are cleared.
+     *
+     * @param person the person or null
+     */
+    private void showVmDetails(VM vm) {
+        if (vm != null) {
+            // Fill the labels with info from the person object.
+            typeLabel.setText(vm.getType());
+            nameLabel.setText(vm.getName());
+            osLabel.setText(vm.getOs());
+            versionLabel.setText(vm.getVersion());
+            sourceLabel.setText(vm.getSource());
+            ethernet0Label.setText(vm.getEthernet0());
+            ethernet1Label.setText(vm.getEthernet1());
+            ethernet2Label.setText(vm.getEthernet2());
+        } else {
+            // Person is null, remove all the text.
+            typeLabel.setText("");
+            nameLabel.setText("");
+            osLabel.setText("");
+            versionLabel.setText("");
+            sourceLabel.setText("");
+            ethernet0Label.setText("");
+            ethernet1Label.setText("");
+            ethernet2Label.setText("");
+        }
+    }
+
+    /**
+     * Called when the user clicks on the delete button.
+     */
+    @FXML
+    //private void handleDeletePerson() {
+    //int selectedIndex = vmTable.getSelectionModel().getSelectedIndex();
+    //vmTable.getItems().remove(selectedIndex);
+
+    private void handleDeletePerson() {
+        int selectedIndex = vmTable.getSelectionModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            vmTable.getItems().remove(selectedIndex);
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Device Selected");
+            alert.setContentText("Please select a device in the table.");
+
+            alert.showAndWait();
+        }
+
+    }
+
+    /**
+     * Called when the user clicks the new button. Opens a dialog to edit
+     * details for a new person.
+     */
+    @FXML
+    private void handleNewVm() {
+        System.out.println("GuiOverviewController: handleNewVm");
+        System.out.println(" ");
+
+        VM tempVm = new VM();
+        boolean okClicked = mainApp.showVmEditDialog(tempVm);
+
+        if (okClicked) {
+            System.out.println("GuiOverviewController: handleNewVm - okClicked ");
+            System.out.println("Output of tempVm: ");
+            System.out.println(tempVm);
+            System.out.println(" ");
+
+            mainApp.getVmData().add(tempVm);
+        }
+    }
+
+    /**
+     * Called when the user clicks the new button. Opens a dialog to edit
+     * details for a new person.
+     */
+    @FXML
+    private void handleNewHub() {
+        HUB tempHub = new HUB();
+        boolean okClicked = mainApp.showHubEditDialog(tempHub);
+
+        if (okClicked) {
+            mainApp.getHubData().add(tempHub);
+        }
+    }
+
+    /**
+     * Called when the user clicks the edit button. Opens a dialog to edit
+     * details for the selected person.
+     */
+    @FXML
+    private void handleEditVM() {
+        VM selectedVm = vmTable.getSelectionModel().getSelectedItem();
+        if (selectedVm != null) {
+            boolean okClicked = mainApp.showVmEditDialog(selectedVm);
+            if (okClicked) {
+                showVmDetails(selectedVm);
+            }
+
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Device Selected");
+            alert.setContentText("Please select a device in the table.");
+
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Called when the user clicks the edit button. Opens a dialog to edit
+     * details for the selected person.
+     */
+    @FXML
+    private void handleEditHUB() {
+        VM selectedVm = vmTable.getSelectionModel().getSelectedItem();
+        if (selectedVm != null) {
+            boolean okClicked = mainApp.showVmEditDialog(selectedVm);
+            if (okClicked) {
+                showVmDetails(selectedVm);
+            }
+
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Device Selected");
+            alert.setContentText("Please select a device in the table.");
+
+            alert.showAndWait();
+        }
+    }
+
+}

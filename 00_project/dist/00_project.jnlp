@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="00_project.jnlp">
+  <information>
+    <title>00_project</title>
+    <vendor>sean.morris</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="00_project.jar" size="11033" download="eager" />
+    <jar href="lib\controlsfx-8.40.10.jar" size="954085" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="00_project" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="pkg00_project.Main"  name="00_project" />
+  <update check="always"/>
+</jnlp>
