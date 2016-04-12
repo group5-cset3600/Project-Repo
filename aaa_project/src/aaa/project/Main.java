@@ -6,9 +6,11 @@
 package aaa.project;
 
 import aaa.project.model.FileParser;
+import aaa.project.model.HUB;
 import aaa.project.model.VM;
 import aaa.project.model.VMListWrapper;
 import aaa.project.view.GuiOverviewController;
+import aaa.project.view.HUBEditDialogController;
 import aaa.project.view.RootLayoutController;
 import aaa.project.view.VMEditDialogController;
 import java.io.BufferedReader;
@@ -44,6 +46,7 @@ public class Main extends Application {
      * The data as an observable list of VMs.
      */
     private ObservableList<VM> vmData = FXCollections.observableArrayList();
+    private ObservableList<HUB> hubData = FXCollections.observableArrayList();
 
     /**
      * Constructor
@@ -71,6 +74,18 @@ public class Main extends Application {
         System.out.println("output (vmData):");
         System.out.println(vmData);
         return vmData;
+    }
+
+    /**
+     * Returns the data as an observable list of VMs.
+     *
+     * @return
+     */
+    public ObservableList<HUB> getHubData() {
+        System.out.println("Main: ObservableList<VM> getVmData()");
+        System.out.println("output (vmData):");
+        System.out.println(hubData);
+        return hubData;
     }
 
     @Override
@@ -183,6 +198,50 @@ public class Main extends Application {
     }
 
     /**
+     * Opens a dialog to edit details for the specified vm. If the user clicks
+     * OK, the changes are saved into the provided vm object and true is
+     * returned.
+     *
+     * @param vm the vm object to be edited
+     * @return true if the user clicked OK, false otherwise.
+     */
+//    public boolean showVmEditDialog(VM vm, String device) {
+    public boolean showHubEditDialog(HUB vm) {
+        System.out.println("Main: showVmEditDialog");
+//        System.out.println("Output of the input (vm, device): ");
+//        System.out.println(vm + ", " + device);
+        System.out.println("");
+
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(Main.class.getResource("view/HUBEditDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit HUB");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the vm into the controller.
+            HUBEditDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setHub(vm);
+
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * Returns the vm file preference, i.e. the file that was last opened. The
      * preference is read from the OS specific registry. If no such preference
      * can be found, null is returned.
@@ -239,6 +298,8 @@ public class Main extends Application {
 
             vmData.clear();
             vmData.addAll(wrapper.getVM());
+            hubData.clear();
+            hubData.addAll(wrapper.getHUB());
 
             // Save the file path to the registry.
             setCfgFilePath(file);
@@ -268,6 +329,7 @@ public class Main extends Application {
             // Wrapping our vm data.
             VMListWrapper wrapper = new VMListWrapper();
             wrapper.setVM(vmData);
+            wrapper.setHUB(hubData);
 
             // Marshalling and saving XML to the file.
             m.marshal(wrapper, file);

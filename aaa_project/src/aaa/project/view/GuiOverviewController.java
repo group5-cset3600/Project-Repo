@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import aaa.project.Main;
 import aaa.project.model.VM;
+import aaa.project.model.HUB;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -23,9 +24,15 @@ public class GuiOverviewController {
     @FXML
     private TableView<VM> vmTable;
     @FXML
+    private TableView<HUB> hubTable;
+    @FXML
     private TableColumn<VM, String> nameColumn;
     @FXML
     private TableColumn<VM, String> typeColumn;
+    @FXML
+    private TableColumn<HUB, String> nameColumn1;
+    @FXML
+    private TableColumn<HUB, String> typeColumn1;
 
     @FXML
     private Label typeLabel;
@@ -43,6 +50,16 @@ public class GuiOverviewController {
     private Label ethernet1Label;
     @FXML
     private Label ethernet2Label;
+    @FXML
+    private Label typeLabel1;
+    @FXML
+    private Label nameLabel1;
+    @FXML
+    private Label subnetLabel;
+    @FXML
+    private Label netmaskLabel;
+    @FXML
+    private Label infLabel;
 
     // Reference to the main application.
     private Main mainApp;
@@ -65,13 +82,19 @@ public class GuiOverviewController {
         //typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
         typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
 //        vmObject.setName(((TextField) childNode.get(i)).getText());
+        nameColumn1.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        //typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+        typeColumn1.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
 
         // Clear details.
         showVmDetails(null);
+        showHubDetails(null);
 
         // Listen for selection changes and show the details when changed.
         vmTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showVmDetails(newValue));
+        hubTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> showHubDetails(newValue));
 
     }
 
@@ -85,6 +108,7 @@ public class GuiOverviewController {
 
         // Add observable list data to the table
         vmTable.setItems(mainApp.getVmData());
+        hubTable.setItems(mainApp.getHubData());
     }
 
     /**
@@ -99,11 +123,11 @@ public class GuiOverviewController {
             typeLabel.setText(vm.getType());
             nameLabel.setText(vm.getName());
             osLabel.setText(vm.getOs());
-//            versionLabel.setText(vm.getVersion());
+            versionLabel.setText(vm.getVersion());
             sourceLabel.setText(vm.getSource());
-//            ethernet0Label.setText(vm.getEthernet0());
-//            ethernet1Label.setText(vm.getEthernet1());
-//            ethernet2Label.setText(vm.getEthernet2());
+            ethernet0Label.setText(vm.getEthernet0());
+            ethernet1Label.setText(vm.getEthernet1());
+            ethernet2Label.setText(vm.getEthernet2());
         } else {
             // vm is null, remove all the text.
             typeLabel.setText("");
@@ -115,6 +139,24 @@ public class GuiOverviewController {
             ethernet1Label.setText("");
             ethernet2Label.setText("");
         }
+    }
+    
+    private void showHubDetails(HUB vm) {
+        if (vm != null) {
+            // Fill the labels with info from the vm object.
+            typeLabel1.setText(vm.getType());
+            nameLabel1.setText(vm.getName());
+            subnetLabel.setText(vm.getSubnet());
+            netmaskLabel.setText(vm.getNetmask());
+//            infLabel.setText(vm.getInf());
+
+        } else {
+            // vm is null, remove all the text.
+            typeLabel1.setText("");
+            nameLabel1.setText("");
+            subnetLabel.setText("");
+            netmaskLabel.setText("");
+            infLabel.setText("");        }
     }
 
     /**
@@ -141,6 +183,27 @@ public class GuiOverviewController {
         }
 
     }
+    
+    /**
+     * Called when the user clicks on the delete button.
+     */
+    @FXML
+    private void handleDeleteHUB() {
+        int selectedIndex = hubTable.getSelectionModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            hubTable.getItems().remove(selectedIndex);
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Device Selected");
+            alert.setContentText("Please select a device in the table.");
+
+            alert.showAndWait();
+        }
+
+    }
 
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
@@ -148,7 +211,7 @@ public class GuiOverviewController {
      */
     @FXML
     private void handleNewVM() {
-        System.out.println("GuiOverviewController: handleNewVm");
+        System.out.println("GuiOverviewController: handleNewVM");
 //        System.out.println("Output of input (device): ");
 //        System.out.println(device);
         System.out.println("");
@@ -161,24 +224,69 @@ public class GuiOverviewController {
             mainApp.getVmData().add(tempVm);
         }
     }
+    
+    /**
+     * Called when the user clicks the new button. Opens a dialog to edit
+     * details for a new vm.
+     */
+    @FXML
+    private void handleNewHUB() {
+        System.out.println("GuiOverviewController: handleNewHUB");
+//        System.out.println("Output of input (device): ");
+//        System.out.println(device);
+        System.out.println("");
+        
+        String device = "HUB";
+        HUB tempHub = new HUB();
+//        boolean okClicked = mainApp.showVmEditDialog(tempVm, device);
+        boolean okClicked = mainApp.showHubEditDialog(tempHub);
+        if (okClicked) {
+            mainApp.getHubData().add(tempHub);
+        }
+    }
 
     /**
      * Called when the user clicks the edit button. Opens a dialog to edit
      * details for the selected vm.
      */
     @FXML
-    //private void handleEditVM() {
     protected void handleEditVM() {
         System.out.println("GuiOverviewController: handleEditVM");
         System.out.println("");
         
-        String device = "VM";
         VM selectedVm = vmTable.getSelectionModel().getSelectedItem();
         if (selectedVm != null) {
-//            boolean okClicked = mainApp.showVmEditDialog(selectedVm, device);
             boolean okClicked = mainApp.showVmEditDialog(selectedVm);
             if (okClicked) {
                 showVmDetails(selectedVm);
+            }
+
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Device Selected");
+            alert.setContentText("Please select a device in the table.");
+
+            alert.showAndWait();
+        }
+    }
+    
+    /**
+     * Called when the user clicks the edit button. Opens a dialog to edit
+     * details for the selected vm.
+     */
+    @FXML
+    protected void handleEditHUB() {
+        System.out.println("GuiOverviewController: handleEditVM");
+        System.out.println("");
+        
+        HUB selectedHub = hubTable.getSelectionModel().getSelectedItem();
+        if (selectedHub != null) {
+            boolean okClicked = mainApp.showHubEditDialog(selectedHub);
+            if (okClicked) {
+                showHubDetails(selectedHub);
             }
 
         } else {

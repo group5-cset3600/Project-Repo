@@ -41,12 +41,12 @@ public class VMEditDialogController {
     private TextField ethernet1Field;
     @FXML
     private TextField ethernet2Field;
-    @FXML
-    private TextField subnetField;
-    @FXML
-    private TextField netmaskField;
-    @FXML
-    private TextField infField;
+//    @FXML
+//    private TextField subnetField;
+//    @FXML
+//    private TextField netmaskField;
+//    @FXML
+//    private TextField infField;
     @FXML
     private ToggleButton vmToggle; //btn1;
     @FXML
@@ -89,11 +89,11 @@ public class VMEditDialogController {
         typeField.setText(vm.getType());
         nameField.setText(vm.getName());
         osField.setText(vm.getOs());
-//        versionField.setText(vm.getVersion());
+        versionField.setText(vm.getVersion());
         sourceField.setText(vm.getSource());
-//        ethernet0Field.setText(vm.getEthernet0());
-//        ethernet1Field.setText(vm.getEthernet1());
-//        ethernet2Field.setText(vm.getEthernet2());
+        ethernet0Field.setText(vm.getEthernet0());
+        ethernet1Field.setText(vm.getEthernet1());
+        ethernet2Field.setText(vm.getEthernet2());
 //        } else {
 //            typeField.setText(vm.getType());
 //            nameField.setText(vm.getName());
@@ -123,11 +123,11 @@ public class VMEditDialogController {
             vm.setType(typeField.getText());
             vm.setName(nameField.getText());
             vm.setOs(osField.getText());
-//            vm.setVersion(versionField.getText());
+            vm.setVersion(versionField.getText());
             vm.setSource(sourceField.getText());
-//            vm.setEthernet0(ethernet0Field.getText());
-//            vm.setEthernet1(ethernet1Field.getText());
-//            vm.setEthernet2(ethernet2Field.getText());
+            vm.setEthernet0(ethernet0Field.getText());
+            vm.setEthernet1(ethernet1Field.getText());
+            vm.setEthernet2(ethernet2Field.getText());
 //            } else {
 //                vm.setType(typeField.getText());
 //                vm.setName(nameField.getText());
