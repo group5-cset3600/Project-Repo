@@ -6,6 +6,7 @@
 package aaa.project.view;
 
 import aaa.project.model.HUB;
+import aaa.project.model.VM;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 /**
@@ -29,18 +31,6 @@ public class HUBEditDialogController {
     @FXML
     private TextField nameField;
     @FXML
-    private TextField osField;
-    @FXML
-    private TextField versionField;
-    @FXML
-    private TextField sourceField;
-    @FXML
-    private TextField ethernet0Field;
-    @FXML
-    private TextField ethernet1Field;
-    @FXML
-    private TextField ethernet2Field;
-    @FXML
     private TextField subnetField;
     @FXML
     private TextField netmaskField;
@@ -52,8 +42,11 @@ public class HUBEditDialogController {
     private ToggleButton hubToggle; //btn2;
 
     private Stage dialogStage;
+    private VM vm;
     private HUB hub;
     private boolean okClicked = false;
+    String device;
+    final ToggleGroup group = new ToggleGroup();
 //    private boolean vmToggleSet = true;
 
     /**
@@ -74,35 +67,26 @@ public class HUBEditDialogController {
     }
 
     /**
-     * Sets the person to be edited in the dialog.
+     * Sets the vm to be edited in the dialog.
      *
-     * @param person
+     * @param vm
      */
     public void setHub(HUB hub) {
         this.hub = hub;
 
-//        //if (vmToggle.isSelected()) {
+        //if (vmToggle.isSelected()) {
 //        if (vmToggleSet) {
-//            typeField.setText(vm.getType());
-//            nameField.setText(vm.getName());
-//            osField.setText(vm.getOs());
-//            versionField.setText(vm.getVersion());
-//            sourceField.setText(vm.getSource());
-//            ethernet0Field.setText(vm.getEthernet0());
-//            ethernet1Field.setText(vm.getEthernet1());
-//            ethernet2Field.setText(vm.getEthernet2());
-//        } else {        
         typeField.setText(hub.getType());
         nameField.setText(hub.getName());
         subnetField.setText(hub.getSubnet());
         netmaskField.setText(hub.getNetmask());
-        infField.setText(hub.getInf());
-//            osField.setText("HUB");
-//            versionField.setText("HUB");
-//            sourceField.setText("HUB");
-//            ethernet0Field.setText("HUB");
-//            ethernet1Field.setText("HUB");
-//            ethernet2Field.setText("HUB");
+//        infField.setText(hub.getInf());
+//        } else {
+//            typeField.setText(vm.getType());
+//            nameField.setText(vm.getName());
+//            subnetField.setText(vm.getSubnet());
+//            netmaskField.setText(vm.getNetmask());
+//            infField.setText(vm.getInf());
 //        }
     }
 
@@ -121,28 +105,25 @@ public class HUBEditDialogController {
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-//            //if (vmToggle.isSelected()) {
+            //if (vmToggle.isSelected()) {
 //            if (vmToggleSet) {
-//                vm.setType(typeField.getText());
-//                vm.setName(nameField.getText());
-//                vm.setOs(osField.getText());
-//                vm.setVersion(versionField.getText());
-//                vm.setSource(sourceField.getText());
-//                vm.setEthernet0(ethernet0Field.getText());
-//                vm.setEthernet1(ethernet1Field.getText());
-//                vm.setEthernet2(ethernet2Field.getText());
-//            } else {            
             hub.setType(typeField.getText());
             hub.setName(nameField.getText());
             hub.setSubnet(subnetField.getText());
             hub.setNetmask(netmaskField.getText());
-            hub.setInf(infField.getText());
-//                vm.setOs(osField.getText());
-//                vm.setVersion("HUB");
-//                vm.setSource("HUB");
-//                vm.setEthernet0("HUB");
-//                vm.setEthernet1("HUB");
-//                vm.setEthernet2("HUB");
+//            hub.setInf(infField.getText());
+//            vm.setOs(osField.getText());
+//            vm.setVersion(versionField.getText());
+//            vm.setSource(sourceField.getText());
+//            vm.setEthernet0(ethernet0Field.getText());
+//            vm.setEthernet1(ethernet1Field.getText());
+//            vm.setEthernet2(ethernet2Field.getText());
+//            } else {
+//                vm.setType(typeField.getText());
+//                vm.setName(nameField.getText());
+//                vm.setSubnet(subnetField.getText());
+//                vm.setNetmask(netmaskField.getText());
+//                vm.setInf(infField.getText());
 //            }
 
             okClicked = true;
@@ -225,17 +206,24 @@ public class HUBEditDialogController {
     private void handleButtonAction(ActionEvent event) throws IOException {
         Stage stage;
         Parent root;
+
         if (event.getSource() == hubToggle) {
             //get reference to the button's stage         
             stage = (Stage) hubToggle.getScene().getWindow();
             //load up OTHER FXML document
             root = FXMLLoader.load(getClass().getResource("HUBEditDialog.fxml"));
+            device = "HUB";
+            //GuiOverviewController.handleEditVM();
 
-//            GuiOverviewController controller = loader.getController();
-//            controller.setMainApp(this);
-        } else {
+            //call Main showVmEditDialog and pass vm, device
+        } else if (event.getSource() == vmToggle) {
             stage = (Stage) vmToggle.getScene().getWindow();
             root = FXMLLoader.load(getClass().getResource("VMEditDialog.fxml"));
+            device = "VM";
+        } else {
+            device = null;
+            root = FXMLLoader.load(getClass().getResource("VMEditDialog.fxml"));
+            stage = (Stage) vmToggle.getScene().getWindow();
         }
         //create a new scene with root and set the stage
         Scene scene = new Scene(root);

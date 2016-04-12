@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class VMListWrapper {
 
     private List<VM> vm;
+    private List<HUB> hub;
 
     @XmlElement(name = "vm")
     public List<VM> getVM() {
@@ -31,5 +32,17 @@ public class VMListWrapper {
 
     public void setVM(List<VM> vm) {
         this.vm = vm;
+    }
+    
+    @XmlElement(name = "hub")
+    public List<HUB> getHUB() {
+        System.out.println("VMListWrapper: getHUB()");
+        System.out.println("output (hub):");
+        System.out.println(hub);
+        return hub;
+    }
+
+    public void setHUB(List<HUB> hub) {
+        this.hub = hub;
     }
 }
